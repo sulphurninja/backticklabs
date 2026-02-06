@@ -1,5 +1,6 @@
 'use client'
 
+import { use } from 'react'
 import { notFound } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Calendar, Clock, Eye, ArrowLeft, Share2, Twitter, Linkedin } from 'lucide-react'
@@ -164,17 +165,18 @@ const getBlogPost = (slug: string) => {
   return posts[slug] || null
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params)
   const { theme } = useTheme()
   const isDark = theme === 'dark'
 
-  const post = getBlogPost(params.slug)
+  const post = getBlogPost(slug)
 
   if (!post) {
     notFound()
   }
 
-  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/blog/${params.slug}`
+  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/blog/${slug}`
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background/95 to-background">
